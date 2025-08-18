@@ -104,6 +104,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="checkbox" name="mentorship_offered" <?= $alumni['mentorship_offered'] ? 'checked' : '' ?>>
             Willing to Offer Mentorship
         </label>
+        <label>
+            <input type="checkbox" name="mentorship_available" value="1" <?= $alumni['mentorship_available'] ? 'checked' : '' ?>>
+            Available for mentorship
+        </label>
+
 
         <button type="submit" class="submit-btn">Update Profile</button>
     </form>

@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EduPortal</title>
+    <title>Login - Internhub</title>
     <style>
         * {
             margin: 0;
@@ -91,65 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e9e9eaff 0%, #d6d4d8ff 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
             position: relative;
-        }
-
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .floating-circle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-circle:nth-child(1) {
-            top: 10%;
-            left: 10%;
-            width: 60px;
-            height: 60px;
-            animation-delay: 0s;
-        }
-
-        .floating-circle:nth-child(2) {
-            top: 20%;
-            right: 10%;
-            width: 40px;
-            height: 40px;
-            animation-delay: 2s;
-        }
-
-        .floating-circle:nth-child(3) {
-            bottom: 20%;
-            left: 20%;
-            width: 80px;
-            height: 80px;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-                opacity: 0.6;
-            }
         }
 
         .login-container {
@@ -520,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </svg>
             </div>
             <h1>Welcome Back</h1>
-            <p>Sign in to your EduPortal account</p>
+            <p>Sign in to your InternHub account</p>
         </div>
 
         <div class="login-form">

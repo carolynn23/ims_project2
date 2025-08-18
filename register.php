@@ -379,7 +379,7 @@
                 </svg>
             </div>
             <h1>Choose Your Path</h1>
-            <p>Select your role to create an account tailored to your needs and start your journey with EduPortal</p>
+            <p>Select your role to create an account tailored to your needs and start your journey with InternHub</p>
         </div>
 
         <div class="role-cards">
