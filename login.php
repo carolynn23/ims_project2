@@ -74,15 +74,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Internhub</title>
+    <title>Login - InternHub</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary-color: #696cff;
+            --primary-light: #7367f0;
+            --secondary-color: #8592a3;
+            --success-color: #71dd37;
+            --warning-color: #ffb400;
+            --danger-color: #ff3e1d;
+            --info-color: #03c3ec;
+            --light-color: #fcfdfd;
+            --dark-color: #233446;
+            --text-primary: #566a7f;
+            --text-secondary: #a8aaae;
+            --text-muted: #c7c8cc;
+            --border-color: #e4e6e8;
+            --card-bg: #fff;
+            --hover-bg: #f8f9fa;
+            --shadow-sm: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+            --shadow-md: 0 4px 8px -4px rgba(67, 89, 113, 0.1);
+            --shadow-lg: 0 6px 14px 0 rgba(67, 89, 113, 0.15);
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --transition: all 0.2s ease-in-out;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -90,101 +122,181 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e9e9eaff 0%, #d6d4d8ff 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .auth-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            position: relative;
+            padding: 2rem 1rem;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        .auth-wrapper {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
             width: 100%;
-            max-width: 450px;
-            position: relative;
-            z-index: 1;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 700px;
         }
 
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            padding: 40px 30px;
+        /* Left Side - Illustration */
+        .auth-cover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            overflow: hidden;
         }
 
-        .login-header::before {
+        .auth-cover::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="25" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="25" cy="75" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
         }
 
-        .login-icon {
-            width: 60px;
-            height: 60px;
+        .auth-cover::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .cover-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cover-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            backdrop-filter: blur(10px);
+            font-size: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cover-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cover-features {
+            display: grid;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
+            flex-shrink: 0;
         }
 
-        .login-icon svg {
-            width: 30px;
-            height: 30px;
-            fill: white;
+        .feature-text {
+            font-size: 0.9375rem;
+            font-weight: 500;
         }
 
-        .login-header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            position: relative;
-            z-index: 1;
+        /* Right Side - Form */
+        .auth-form-section {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .login-header p {
-            opacity: 0.9;
-            font-size: 14px;
-            position: relative;
-            z-index: 1;
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .login-form {
-            padding: 40px 30px;
+        .form-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
         }
 
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Role Selection */
         .role-selection {
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
         }
 
         .role-title {
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
             text-align: center;
         }
 
         .role-options {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
         }
 
         .role-option {
@@ -194,141 +306,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .role-option input[type="radio"] {
             position: absolute;
             opacity: 0;
+            width: 100%;
+            height: 100%;
             cursor: pointer;
         }
 
         .role-label {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            background: var(--hover-bg);
+            transition: var(--transition);
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            font-weight: 500;
-            font-size: 14px;
-            min-width: 100px;
+            text-align: center;
+            min-height: 80px;
             justify-content: center;
         }
 
+        .role-label:hover {
+            border-color: var(--primary-color);
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
         .role-option input[type="radio"]:checked + .role-label {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(105, 108, 255, 0.3);
         }
 
-        .role-option.student .role-label {
-            --hover-color: #4CAF50;
+        .role-icon {
+            font-size: 1.5rem;
         }
 
-        .role-option.employer .role-label {
-            --hover-color: #2196F3;
+        .role-text {
+            font-size: 0.875rem;
+            font-weight: 600;
         }
 
-        .role-option.alumni .role-label {
-            --hover-color: #FF9800;
-        }
-
-        .role-option:hover .role-label:not(:has(input:checked)) {
-            border-color: var(--hover-color);
-            background: var(--hover-color);
-            color: white;
-            transform: translateY(-1px);
-        }
-
+        /* Form Styles */
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9375rem;
         }
 
-        .form-input {
+        .input-group {
+            position: relative;
+        }
+
+        .form-control {
             width: 100%;
-            padding: 15px 45px 15px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background: var(--light-color);
+            transition: var(--transition);
         }
 
-        .form-input:focus {
+        .form-control:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-color);
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.1);
         }
 
         .input-icon {
             position: absolute;
-            right: 15px;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            opacity: 0.5;
+            color: var(--text-muted);
+            font-size: 1.125rem;
+            pointer-events: none;
         }
 
-        .input-icon svg {
+        /* Error Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-danger {
+            background: rgba(255, 62, 29, 0.1);
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Submit Button */
+        .btn-primary {
             width: 100%;
-            height: 100%;
-            fill: #666;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c53030;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border-left: 4px solid #c53030;
-            text-align: center;
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
 
-        .login-button:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 16px rgba(105, 108, 255, 0.3);
+            color: white;
         }
 
-        .login-button:active {
+        .btn-primary:active {
             transform: translateY(0);
         }
 
-        .login-button::before {
+        .btn-primary::before {
             content: '';
             position: absolute;
             top: 0;
@@ -339,16 +448,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: left 0.5s;
         }
 
-        .login-button:hover::before {
+        .btn-primary:hover::before {
             left: 100%;
         }
 
-        .loading {
+        /* Loading State */
+        .btn-loading {
             opacity: 0.7;
             pointer-events: none;
         }
 
-        .loading::after {
+        .btn-loading::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -367,48 +477,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             100% { transform: rotate(360deg); }
         }
 
-        .forgot-password {
+        /* Form Footer */
+        .form-footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 2rem;
         }
 
-        .forgot-password a {
-            color: #667eea;
+        .form-footer a {
+            color: var(--primary-color);
             text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: var(--transition);
         }
 
-        .forgot-password a:hover {
-            color: #764ba2;
+        .form-footer a:hover {
+            color: var(--primary-light);
             text-decoration: underline;
         }
 
-        .footer-links {
-            text-align: center;
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-top: 1px solid #e1e5e9;
-        }
-
-        .footer-links a {
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #667eea;
-        }
-
         .divider {
-            text-align: center;
-            margin: 25px 0;
             position: relative;
-            color: #666;
-            font-size: 14px;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
 
         .divider::before {
@@ -418,206 +510,368 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 0;
             right: 0;
             height: 1px;
-            background: #e1e5e9;
+            background: var(--border-color);
             z-index: 1;
         }
 
         .divider span {
-            background: white;
-            padding: 0 15px;
+            background: var(--card-bg);
+            padding: 0 1rem;
             position: relative;
             z-index: 2;
         }
 
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 10px;
+        /* Footer Links */
+        .footer-links {
+            text-align: center;
+            padding: 1.5rem 0 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin: 0 0.75rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .auth-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 500px;
             }
-            
-            .login-form {
-                padding: 30px 20px;
+
+            .auth-cover {
+                display: none;
             }
-            
-            .login-header {
-                padding: 30px 20px;
+
+            .auth-form-section {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                padding: 1rem;
+            }
+
+            .auth-form-section {
+                padding: 1.5rem;
             }
 
             .role-options {
-                flex-direction: column;
-                gap: 10px;
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
 
             .role-label {
-                min-width: auto;
+                flex-direction: row;
+                justify-content: flex-start;
+                min-height: auto;
+                padding: 0.75rem;
+            }
+
+            .cover-title {
+                font-size: 2rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Animations */
+        .auth-wrapper {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role-option {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .role-option:nth-child(1) { animation-delay: 0.1s; }
+        .role-option:nth-child(2) { animation-delay: 0.2s; }
+        .role-option:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="floating-elements">
-        <div class="floating-circle"></div>
-        <div class="floating-circle"></div>
-        <div class="floating-circle"></div>
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <!-- Left Side - Cover/Illustration -->
+            <div class="auth-cover">
+                <div class="cover-content">
+                    <div class="cover-logo">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <h1 class="cover-title">Welcome to InternHub</h1>
+                    <p class="cover-subtitle">Connect with opportunities, build your career, and shape your future in the internship ecosystem.</p>
+                    
+                    <div class="cover-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-briefcase"></i>
+                            </div>
+                            <div class="feature-text">Discover amazing internship opportunities</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="feature-text">Connect with industry professionals</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="feature-text">Track your career progress</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="auth-form-section">
+                <div class="form-header">
+                    <h1>Sign In</h1>
+                    <p>Welcome back! Please sign in to your account</p>
+                </div>
+
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <?php echo htmlspecialchars($error); ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="" id="loginForm">
+                    <!-- Role Selection -->
+                    <div class="role-selection">
+                        <div class="role-title">Select Your Role</div>
+                        <div class="role-options">
+                            <div class="role-option">
+                                <input type="radio" name="role" value="student" id="student" required 
+                                       <?php echo (isset($_POST['role']) && $_POST['role'] === 'student') ? 'checked' : ''; ?>>
+                                <label for="student" class="role-label">
+                                    <div class="role-icon">🎓</div>
+                                    <div class="role-text">Student</div>
+                                </label>
+                            </div>
+                            
+                            <div class="role-option">
+                                <input type="radio" name="role" value="employer" id="employer" required
+                                       <?php echo (isset($_POST['role']) && $_POST['role'] === 'employer') ? 'checked' : ''; ?>>
+                                <label for="employer" class="role-label">
+                                    <div class="role-icon">💼</div>
+                                    <div class="role-text">Employer</div>
+                                </label>
+                            </div>
+
+                            <div class="role-option">
+                                <input type="radio" name="role" value="alumni" id="alumni" required
+                                       <?php echo (isset($_POST['role']) && $_POST['role'] === 'alumni') ? 'checked' : ''; ?>>
+                                <label for="alumni" class="role-label">
+                                    <div class="role-icon">🌟</div>
+                                    <div class="role-text">Alumni</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <span>Enter your credentials</span>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input type="email" id="email" name="email" class="form-control" required 
+                                   value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+                                   placeholder="Enter your email address">
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input type="password" id="password" name="password" class="form-control" required
+                                   placeholder="Enter your password">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Form Footer -->
+                <div class="form-footer">
+                    <a href="forgot-password.php">Forgot your password?</a>
+                </div>
+
+                <div class="footer-links">
+                    <a href="register.php">Create Account</a>
+                    <span style="color: var(--border-color);">|</span>
+                    <a href="contact.php">Need Help?</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="login-container">
-        <div class="login-header">
-            <div class="login-icon">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7V10C2 17 6.84 23.74 12 23.74S22 17 22 10V7L12 2Z"/>
-                </svg>
-            </div>
-            <h1>Welcome Back</h1>
-            <p>Sign in to your InternHub account</p>
-        </div>
-
-        <div class="login-form">
-            <?php if (!empty($error)): ?>
-                <div class="error-message">
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
-
-            <form method="POST" action="" id="loginForm">
-                <div class="role-selection">
-                    <div class="role-title">Select Your Role</div>
-                    <div class="role-options">
-                        <div class="role-option student">
-                            <input type="radio" name="role" value="student" id="student" required 
-                                   <?php echo (isset($_POST['role']) && $_POST['role'] === 'student') ? 'checked' : ''; ?>>
-                            <label for="student" class="role-label">
-                                🎓 Student
-                            </label>
-                        </div>
-                        
-                        <div class="role-option employer">
-                            <input type="radio" name="role" value="employer" id="employer" required
-                                   <?php echo (isset($_POST['role']) && $_POST['role'] === 'employer') ? 'checked' : ''; ?>>
-                            <label for="employer" class="role-label">
-                                💼 Employer
-                            </label>
-                        </div>
-
-                        <div class="role-option alumni">
-                            <input type="radio" name="role" value="alumni" id="alumni" required
-                                   <?php echo (isset($_POST['role']) && $_POST['role'] === 'alumni') ? 'checked' : ''; ?>>
-                            <label for="alumni" class="role-label">
-                                🌟 Alumni
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="divider">
-                    <span>Enter your credentials</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-input" required 
-                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
-                           placeholder="Enter your email">
-                    <div class="input-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-input" required
-                           placeholder="Enter your password">
-                    <div class="input-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <button type="submit" class="login-button" id="loginBtn">
-                    Sign In
-                </button>
-            </form>
-
-            <div class="forgot-password">
-                <a href="forgot-password.php">Forgot your password?</a>
-            </div>
-        </div>
-
-        <div class="footer-links">
-            <a href="register.php">Create Account</a>
-            <span style="color: #ccc;">|</span>
-            <a href="contact.php">Need Help?</a>
-        </div>
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Form submission with loading state
-        document.getElementById('loginForm').addEventListener('submit', function() {
-            const btn = document.getElementById('loginBtn');
-            const selectedRole = document.querySelector('input[name="role"]:checked');
-            
-            if (selectedRole) {
-                btn.classList.add('loading');
-                btn.textContent = `Signing in as ${selectedRole.value.charAt(0).toUpperCase() + selectedRole.value.slice(1)}...`;
-            }
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const roleInputs = document.querySelectorAll('input[name="role"]');
 
-        // Auto-focus on email field
-        document.getElementById('email').focus();
+            // Auto-focus on email field
+            emailInput.focus();
 
-        // Interactive feedback for form inputs
-        const inputs = document.querySelectorAll('.form-input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Role selection enhancement
-        const roleOptions = document.querySelectorAll('input[name="role"]');
-        roleOptions.forEach(option => {
-            option.addEventListener('change', function() {
-                // Update button text based on selected role
-                const btn = document.getElementById('loginBtn');
-                const role = this.value;
-                btn.textContent = `Sign In as ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+            // Form submission with loading state
+            loginForm.addEventListener('submit', function() {
+                const selectedRole = document.querySelector('input[name="role"]:checked');
                 
-                // Add selection animation
-                this.nextElementSibling.style.transform = 'scale(1.05)';
+                if (selectedRole) {
+                    loginBtn.classList.add('btn-loading');
+                    loginBtn.innerHTML = `<i class="bi bi-arrow-clockwise me-2"></i>Signing in as ${selectedRole.value.charAt(0).toUpperCase() + selectedRole.value.slice(1)}...`;
+                }
+            });
+
+            // Enhanced role selection
+            roleInputs.forEach(role => {
+                role.addEventListener('change', function() {
+                    const roleName = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+                    loginBtn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i>Sign In as ${roleName}`;
+                    
+                    // Add selection animation
+                    const label = this.nextElementSibling;
+                    label.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        label.style.transform = '';
+                    }, 200);
+                });
+            });
+
+            // Input focus effects
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-1px)';
+                    this.parentElement.style.boxShadow = '0 4px 12px rgba(105, 108, 255, 0.15)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = '';
+                    this.parentElement.style.boxShadow = '';
+                });
+            });
+
+            // Enhanced error handling
+            const errorAlert = document.querySelector('.alert-danger');
+            if (errorAlert) {
+                // Add shake animation to error
+                errorAlert.style.animation = 'shake 0.5s ease-in-out';
+                
+                // Auto-hide error after 5 seconds
                 setTimeout(() => {
-                    this.nextElementSibling.style.transform = 'translateY(-2px)';
-                }, 200);
-            });
-        });
+                    errorAlert.style.opacity = '0.8';
+                }, 5000);
+            }
 
-        // Parallax effect for floating elements
-        document.addEventListener('mousemove', function(e) {
-            const circles = document.querySelectorAll('.floating-circle');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            circles.forEach((circle, index) => {
-                const speed = (index + 1) * 0.3;
-                const xMove = (x - 0.5) * speed * 15;
-                const yMove = (y - 0.5) * speed * 15;
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Alt + 1, 2, 3 for role selection
+                if (e.altKey) {
+                    if (e.key === '1') {
+                        document.getElementById('student').checked = true;
+                        document.getElementById('student').dispatchEvent(new Event('change'));
+                    } else if (e.key === '2') {
+                        document.getElementById('employer').checked = true;
+                        document.getElementById('employer').dispatchEvent(new Event('change'));
+                    } else if (e.key === '3') {
+                        document.getElementById('alumni').checked = true;
+                        document.getElementById('alumni').dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+
+            // Add form validation feedback
+            const validateForm = () => {
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const role = document.querySelector('input[name="role"]:checked');
                 
-                circle.style.transform = `translate(${xMove}px, ${yMove}px)`;
+                if (email && password && role) {
+                    loginBtn.disabled = false;
+                    loginBtn.style.opacity = '1';
+                } else {
+                    loginBtn.disabled = true;
+                    loginBtn.style.opacity = '0.6';
+                }
+            };
+
+            // Real-time validation
+            emailInput.addEventListener('input', validateForm);
+            passwordInput.addEventListener('input', validateForm);
+            roleInputs.forEach(input => {
+                input.addEventListener('change', validateForm);
             });
+
+            // Initial validation
+            validateForm();
         });
 
-        // Enhanced error handling
-        const errorMessage = document.querySelector('.error-message');
-        if (errorMessage) {
-            setTimeout(() => {
-                errorMessage.style.opacity = '0.8';
-            }, 3000);
-        }
+        // Add shake animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
