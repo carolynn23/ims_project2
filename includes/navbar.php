@@ -26,14 +26,10 @@ $userRole = $_SESSION['role'] ?? 'user';
       </div>
     </div>
 
- 
-
     <!-- Right Section -->
     <div class="navbar-right">
       <!-- Quick Actions -->
       <div class="quick-actions">
-      
-
         <!-- Messages -->
         <div class="action-item">
           <button class="action-btn">
@@ -72,28 +68,19 @@ $userRole = $_SESSION['role'] ?? 'user';
             </div>
             <div class="profile-details">
               <h6 class="profile-name-large"><?= htmlspecialchars($displayName) ?></h6>
-              <span class="profile-email">student@university.edu</span>
+              <span class="profile-email"><?= $_SESSION['email'] ?? 'user@example.com' ?></span>
               <span class="profile-role-badge"><?= ucfirst($userRole) ?></span>
             </div>
           </div>
           
           <div class="profile-menu">
-            <a href="profile.php" class="profile-menu-item">
+            <a href="#" class="profile-menu-item">
               <i class="bi bi-person"></i>
               <span>My Profile</span>
             </a>
-            <a href="settings.php" class="profile-menu-item">
+            <a href="#" class="profile-menu-item">
               <i class="bi bi-gear"></i>
               <span>Account Settings</span>
-            </a>
-            <a href="billing.php" class="profile-menu-item">
-              <i class="bi bi-credit-card"></i>
-              <span>Billing & Plans</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="help.php" class="profile-menu-item">
-              <i class="bi bi-question-circle"></i>
-              <span>Help & Support</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="logout.php" class="profile-menu-item text-danger">
@@ -208,74 +195,6 @@ $userRole = $_SESSION['role'] ?? 'user';
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 500;
-}
-
-/* Center Section - Search */
-.navbar-center {
-  flex: 1;
-  max-width: 500px;
-  margin: 0 2rem;
-}
-
-.search-container {
-  position: relative;
-}
-
-.search-input-group {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: var(--hover-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-lg);
-  padding: 0.5rem;
-  transition: var(--transition);
-}
-
-.search-input-group:focus-within {
-  background: white;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.1);
-}
-
-.search-icon {
-  color: var(--text-muted);
-  margin-right: 0.75rem;
-  font-size: 1rem;
-}
-
-.search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 0.9375rem;
-  color: var(--text-primary);
-  padding: 0.25rem 0;
-}
-
-.search-input:focus {
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: var(--text-muted);
-}
-
-.search-btn {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-.search-btn:hover {
-  background: var(--primary-light);
 }
 
 /* Right Section */
@@ -427,100 +346,6 @@ $userRole = $_SESSION['role'] ?? 'user';
   min-width: 280px;
 }
 
-/* Notification Dropdown */
-.notification-dropdown {
-  width: 350px;
-}
-
-.dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--hover-bg);
-}
-
-.dropdown-header h6 {
-  margin: 0;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.notification-list {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.notification-item {
-  display: flex;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: var(--transition);
-}
-
-.notification-item:hover {
-  background: var(--hover-bg);
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-
-.notification-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-}
-
-.notification-content {
-  flex: 1;
-}
-
-.notification-title {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
-}
-
-.notification-text {
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-}
-
-.notification-time {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
-.dropdown-footer {
-  padding: 0.75rem 1.25rem;
-  border-top: 1px solid var(--border-color);
-  background: var(--hover-bg);
-  text-align: center;
-}
-
-.view-all-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.view-all-link:hover {
-  color: var(--primary-light);
-}
-
 /* Profile Dropdown */
 .profile-dropdown {
   width: 280px;
@@ -647,10 +472,6 @@ $userRole = $_SESSION['role'] ?? 'user';
     left: 0;
   }
   
-  .navbar-center {
-    display: none;
-  }
-  
   .profile-info {
     display: none;
   }
@@ -674,47 +495,11 @@ $userRole = $_SESSION['role'] ?? 'user';
   .dropdown-menu {
     min-width: 260px;
   }
-  
-  .notification-dropdown {
-    width: 300px;
-  }
-}
-
-/* Animation for notifications */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-.notification-badge {
-  animation: pulse 2s ease-in-out infinite;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Global search functionality
-  const globalSearch = document.getElementById('globalSearch');
-  const searchBtn = document.querySelector('.search-btn');
-  
-  if (globalSearch) {
-    globalSearch.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        performSearch();
-      }
-    });
-    
-    searchBtn.addEventListener('click', performSearch);
-  }
-  
-  function performSearch() {
-    const query = globalSearch.value.trim();
-    if (query) {
-      // Redirect to search results page
-      window.location.href = `student-dashboard.php?q=${encodeURIComponent(query)}`;
-    }
-  }
-  
   // Mobile menu toggle
   const mobileMenuToggle = document.getElementById('mobileMenuToggle');
   if (mobileMenuToggle) {
@@ -734,20 +519,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdown.classList.remove('show');
       });
     }
-  });
-  
-  // Add loading state to profile actions
-  const profileMenuItems = document.querySelectorAll('.profile-menu-item');
-  profileMenuItems.forEach(item => {
-    item.addEventListener('click', function(e) {
-      if (this.href && !this.href.includes('#')) {
-        this.style.opacity = '0.7';
-        const icon = this.querySelector('i');
-        if (icon) {
-          icon.className = 'bi bi-arrow-clockwise';
-        }
-      }
-    });
   });
 });
 </script>

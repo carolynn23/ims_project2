@@ -2,6 +2,8 @@
 session_start();
 require_once 'config.php'; // Ensure this file connects to your DB using $conn
 
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect and sanitize form data
     $company_name = trim($_POST['company_name']);
@@ -31,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($insertEmployer->execute()) {
             // Success - redirect to login or dashboard
             $_SESSION['success'] = "Employer registered successfully!";
-            header("Location: login.php");
+            header("Location: employer-dashboard.php");
             exit();
         } else {
             echo "Error inserting employer details: " . $insertEmployer->error;

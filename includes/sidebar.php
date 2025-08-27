@@ -252,44 +252,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
       color: #ff4757;
     }
 
-    /* User Profile Section */
-    .sidebar-user {
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border-color);
-      margin-top: auto;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      font-size: 0.875rem;
-    }
-
-    .user-details h6 {
-      margin: 0;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .user-details small {
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       .sidebar {
@@ -299,29 +261,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
       .sidebar.show {
         transform: translateX(0);
       }
-    }
-
-    /* Additional Enhancements */
-    .nav-link.has-submenu::after {
-      content: '\f282';
-      font-family: 'bootstrap-icons';
-      margin-left: auto;
-      transition: var(--transition);
-    }
-
-    .nav-link.has-submenu.expanded::after {
-      transform: rotate(90deg);
-    }
-
-    /* Smooth animations */
-    .sidebar * {
-      transition: var(--transition);
-    }
-
-    /* Custom scrollbar for better UX */
-    .sidebar {
-      scrollbar-width: thin;
-      scrollbar-color: var(--text-muted) transparent;
     }
   </style>
 </head>
@@ -398,12 +337,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                             <span class="nav-text">Profile</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="student-analytics.php">
-                            <i class="nav-icon bi bi-graph-up"></i>
-                            <span class="nav-text">Analytics</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
         <?php endif; ?>
@@ -452,7 +385,7 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                 <div class="nav-section-title">Account</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="profile-employer.php">
+                        <a class="nav-link" href="edit-employer-profile.php">
                             <i class="nav-icon bi bi-person"></i>
                             <span class="nav-text">Profile</span>
                         </a>
@@ -478,42 +411,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                             <span class="nav-text">Mentor Students</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="share-experience.php">
-                            <i class="nav-icon bi bi-journal-text"></i>
-                            <span class="nav-text">Share Experiences</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Community</div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="alumni-directory.php">
-                            <i class="nav-icon bi bi-people"></i>
-                            <span class="nav-text">Alumni Directory</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="alumni-community.php">
-                            <i class="nav-icon bi bi-globe"></i>
-                            <span class="nav-text">Community</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Opportunities</div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="post-job.php">
-                            <i class="nav-icon bi bi-briefcase"></i>
-                            <span class="nav-text">Post Jobs</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
 
@@ -524,39 +421,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                         <a class="nav-link" href="edit-alumni-profile.php">
                             <i class="nav-icon bi bi-gear"></i>
                             <span class="nav-text">Profile Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <!-- Admin Role Menu -->
-        <?php if ($role === 'admin'): ?>
-            <div class="nav-section">
-                <div class="nav-section-title">Administration</div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin-dashboard.php">
-                            <i class="nav-icon bi bi-house-door"></i>
-                            <span class="nav-text">Admin Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="manage-users.php">
-                            <i class="nav-icon bi bi-person-lines-fill"></i>
-                            <span class="nav-text">Manage Users</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="view-all-internships.php">
-                            <i class="nav-icon bi bi-list-ul"></i>
-                            <span class="nav-text">All Internships</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="view-feedback.php">
-                            <i class="nav-icon bi bi-chat-dots"></i>
-                            <span class="nav-text">View Feedback</span>
                         </a>
                     </li>
                 </ul>
@@ -605,17 +469,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Mobile sidebar toggle (if needed)
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('show');
-    }
-
-    // Add click handler for mobile menu button (if you add one)
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
-    }
 });
 </script>

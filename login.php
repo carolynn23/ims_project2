@@ -2,6 +2,8 @@
 session_start();
 require_once 'config.php';
 
+
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -452,31 +454,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 100%;
         }
 
-        /* Loading State */
-        .btn-loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .btn-loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* Form Footer */
         .form-footer {
             text-align: center;
@@ -742,13 +719,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Form Footer -->
                 <div class="form-footer">
-                    <a href="forgot-password.php">Forgot your password?</a>
+                    <a href="#">Forgot your password?</a>
                 </div>
 
                 <div class="footer-links">
                     <a href="register.php">Create Account</a>
                     <span style="color: var(--border-color);">|</span>
-                    <a href="contact.php">Need Help?</a>
+                    <a href="#">Need Help?</a>
                 </div>
             </div>
         </div>
@@ -792,86 +769,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }, 200);
                 });
             });
-
-            // Input focus effects
-            const inputs = document.querySelectorAll('.form-control');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'translateY(-1px)';
-                    this.parentElement.style.boxShadow = '0 4px 12px rgba(105, 108, 255, 0.15)';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.parentElement.style.transform = '';
-                    this.parentElement.style.boxShadow = '';
-                });
-            });
-
-            // Enhanced error handling
-            const errorAlert = document.querySelector('.alert-danger');
-            if (errorAlert) {
-                // Add shake animation to error
-                errorAlert.style.animation = 'shake 0.5s ease-in-out';
-                
-                // Auto-hide error after 5 seconds
-                setTimeout(() => {
-                    errorAlert.style.opacity = '0.8';
-                }, 5000);
-            }
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Alt + 1, 2, 3 for role selection
-                if (e.altKey) {
-                    if (e.key === '1') {
-                        document.getElementById('student').checked = true;
-                        document.getElementById('student').dispatchEvent(new Event('change'));
-                    } else if (e.key === '2') {
-                        document.getElementById('employer').checked = true;
-                        document.getElementById('employer').dispatchEvent(new Event('change'));
-                    } else if (e.key === '3') {
-                        document.getElementById('alumni').checked = true;
-                        document.getElementById('alumni').dispatchEvent(new Event('change'));
-                    }
-                }
-            });
-
-            // Add form validation feedback
-            const validateForm = () => {
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-                const role = document.querySelector('input[name="role"]:checked');
-                
-                if (email && password && role) {
-                    loginBtn.disabled = false;
-                    loginBtn.style.opacity = '1';
-                } else {
-                    loginBtn.disabled = true;
-                    loginBtn.style.opacity = '0.6';
-                }
-            };
-
-            // Real-time validation
-            emailInput.addEventListener('input', validateForm);
-            passwordInput.addEventListener('input', validateForm);
-            roleInputs.forEach(input => {
-                input.addEventListener('change', validateForm);
-            });
-
-            // Initial validation
-            validateForm();
         });
-
-        // Add shake animation keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>

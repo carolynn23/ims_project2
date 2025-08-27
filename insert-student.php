@@ -2,6 +2,7 @@
 session_start();
 require_once 'config.php';
 
+
 function redirect_with($params) {
     $qs = http_build_query($params);
     header("Location: register-student.php?$qs");
