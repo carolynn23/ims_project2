@@ -13,7 +13,7 @@ if (!defined('SECURE_ACCESS')) {
 ob_start();
 
 // Include security class
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/class-security.php';
 
 // Environment Configuration
 define('ENVIRONMENT', 'development'); // Change to 'production' for live site
