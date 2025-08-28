@@ -6,8 +6,8 @@
 
 define('SECURE_ACCESS', true);
 session_start();
-require_once 'secure_config.php';
-require_once 'middleware/auth_middleware.php';
+require_once __DIR__ . '/../secure_config.php';
+require_once __DIR__ . '/../middleware/auth_middleware.php';
 
 // Require admin authentication
 AuthMiddleware::requireAuth('admin');

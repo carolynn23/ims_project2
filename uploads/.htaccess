@@ -1,0 +1,7 @@
+# Deny script execution in uploads
+<FilesMatch "\.(php|php\d*|phtml|phar)$">
+  Deny from all
+</FilesMatch>
+
+Options -ExecCGI
+RemoveHandler .php .phtml .php3 .php4 .php5 .phps

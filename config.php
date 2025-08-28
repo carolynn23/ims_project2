@@ -1,13 +1,8 @@
 <?php
-$host = "localhost";
-$user = "root"; // change if needed
-$password = ""; // change if needed
-$dbname = "internship_db";
-
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Centralized bootstrap delegating to secure_config for PDO/mysqli and security
+if (!defined('SECURE_ACCESS')) {
+    define('SECURE_ACCESS', true);
 }
+
+require_once __DIR__ . '/secure_config.php';
 ?>
