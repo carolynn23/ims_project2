@@ -8,19 +8,47 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 
 $user_id = (int)$_SESSION['user_id'];
 
-// which are saved?
+// Get student info
 $ss = $conn->prepare("SELECT student_id FROM students WHERE user_id=?");
-$ss->bind_param("i",$user_id);
+$ss->bind_param("i", $user_id);
 $ss->execute();
-$student_id = (int)($ss->get_result()->fetch_assoc()['student_id'] ?? 0);
+$student_result = $ss->get_result()->fetch_assoc();
+$student_id = (int)($student_result['student_id'] ?? 0);
 
 $saved = [];
 if ($student_id) {
   $sx = $conn->prepare("SELECT internship_id FROM saved_internships WHERE student_id=?");
-  $sx->bind_param("i",$student_id);
+  $sx->bind_param("i", $student_id);
   $sx->execute();
   $res = $sx->get_result();
   while ($r = $res->fetch_assoc()) $saved[(int)$r['internship_id']] = true;
+}
+
+// Handle feedback messages
+$success_message = '';
+$error_message = '';
+$internship_name = htmlspecialchars($_GET['internship'] ?? '');
+
+if (isset($_GET['success'])) {
+    switch ($_GET['success']) {
+        case 'application_submitted':
+            $success_message = "🎉 Application submitted successfully! Your application for \"$internship_name\" has been sent to the employer. You will receive notifications about any updates.";
+            break;
+        case 'application_withdrawn':
+            $success_message = "✅ Application for \"$internship_name\" has been withdrawn successfully.";
+            break;
+    }
+}
+
+if (isset($_GET['error'])) {
+    switch ($_GET['error']) {
+        case 'already_applied':
+            $error_message = "⚠️ You have already applied for \"$internship_name\". Check your applications page for status updates.";
+            break;
+        case 'application_failed':
+            $error_message = "❌ Failed to submit your application for \"$internship_name\". Please try again.";
+            break;
+    }
 }
 
 // filters
@@ -44,12 +72,12 @@ if ($q !== '')   { $sql .= " AND (i.title LIKE CONCAT('%',?,'%') OR e.company_na
 if ($loc !== '') { $sql .= " AND i.location LIKE CONCAT('%',?,'%')"; $params[]=$loc; $types.="s"; }
 if ($type!=='')  { $sql .= " AND i.type = ?"; $params[]=$type; $types.="s"; }
 
-$sql .= " ORDER BY i.created_at DESC";
+$sql .= " ORDER BY i.created_at DESC LIMIT 50";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param($types, ...$params);
-$stmt->execute();
-$list = $stmt->get_result();
+$list = $conn->prepare($sql);
+if (!empty($params)) $list->bind_param($types, ...$params);
+$list->execute();
+$list = $list->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,7 +133,6 @@ $list = $stmt->get_result();
       line-height: 1.6;
     }
 
-    /* Main Content Area */
     .main-content {
       margin-left: 260px;
       padding: 2rem;
@@ -113,69 +140,29 @@ $list = $stmt->get_result();
       transition: var(--transition);
     }
 
-    /* Page Header */
     .page-header {
       background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
       border-radius: var(--border-radius-lg);
+      color: white;
       padding: 2rem;
       margin-bottom: 2rem;
-      color: white;
-      position: relative;
-      overflow: hidden;
       box-shadow: var(--shadow-lg);
-    }
-
-    .page-header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 100px;
-      height: 100px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .page-header::after {
-      content: '';
-      position: absolute;
-      bottom: -30%;
-      left: -5%;
-      width: 80px;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      animation: float 8s ease-in-out infinite reverse;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(180deg); }
-    }
-
-    .page-header-content {
-      position: relative;
-      z-index: 2;
     }
 
     .page-title {
       font-size: 2rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .page-subtitle {
-      font-size: 1rem;
+      font-size: 1.1rem;
       opacity: 0.9;
-      font-weight: 400;
+      margin-bottom: 2rem;
     }
 
     .stats-row {
       margin-top: 1.5rem;
-      position: relative;
-      z-index: 2;
     }
 
     .stat-item {
@@ -183,21 +170,21 @@ $list = $stmt->get_result();
     }
 
     .stat-number {
-      font-size: 1.5rem;
-      font-weight: 700;
       display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
     }
 
     .stat-label {
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       opacity: 0.8;
     }
 
-    /* Search Section */
     .search-section {
       background: var(--card-bg);
       border-radius: var(--border-radius-lg);
-      padding: 1.5rem;
+      padding: 2rem;
       margin-bottom: 2rem;
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--border-color);
@@ -206,17 +193,17 @@ $list = $stmt->get_result();
     .search-section h5 {
       color: var(--text-primary);
       font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
     .form-control, .form-select {
-      border: 1px solid var(--border-color);
+      border: 2px solid var(--border-color);
       border-radius: var(--border-radius);
       padding: 0.75rem 1rem;
-      font-size: 0.9375rem;
+      font-size: 0.95rem;
       transition: var(--transition);
       background-color: var(--light-color);
     }
@@ -227,26 +214,28 @@ $list = $stmt->get_result();
       background-color: white;
     }
 
+    .form-label {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
     .btn-search {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-      color: white;
+      background: var(--primary-color);
       border: none;
+      color: white;
+      font-weight: 600;
       padding: 0.75rem 1.5rem;
       border-radius: var(--border-radius);
-      font-weight: 600;
       transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     .btn-search:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(105, 108, 255, 0.3);
+      background: var(--primary-light);
+      transform: translateY(-1px);
       color: white;
     }
 
-    /* Results Section */
     .results-section {
       margin-bottom: 2rem;
     }
@@ -259,174 +248,82 @@ $list = $stmt->get_result();
     }
 
     .results-count {
-      color: var(--text-secondary);
-      font-size: 0.9375rem;
+      font-size: 1.1rem;
+      color: var(--text-primary);
     }
 
-    .view-toggles {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .view-toggle {
-      padding: 0.5rem;
-      border: 1px solid var(--border-color);
-      background: white;
-      border-radius: var(--border-radius);
-      color: var(--text-secondary);
-      transition: var(--transition);
-    }
-
-    .view-toggle.active,
-    .view-toggle:hover {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-    }
-
-    /* Internship Cards */
-    .internship-card {
+    .card {
       background: var(--card-bg);
-      border-radius: var(--border-radius-lg);
       border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-sm);
       transition: var(--transition);
-      height: 100%;
+      margin-bottom: 1.5rem;
       overflow: hidden;
-      position: relative;
     }
 
-    .internship-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
       border-color: var(--primary-color);
     }
 
-    .card-image {
-      position: relative;
-      height: 160px;
-      overflow: hidden;
-    }
-
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: var(--transition);
-    }
-
-    .internship-card:hover .card-image img {
-      transform: scale(1.05);
-    }
-
-    .save-badge {
-      position: absolute;
-      top: 0.75rem;
-      right: 0.75rem;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.125rem;
-      backdrop-filter: blur(10px);
-      transition: var(--transition);
-      z-index: 2;
-    }
-
-    .save-badge.saved {
-      background: var(--warning-color);
-      color: white;
-    }
-
-    .type-badge {
-      position: absolute;
-      bottom: 0.75rem;
-      left: 0.75rem;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .type-badge.in-person {
-      background: var(--success-color);
-      color: white;
-    }
-
-    .type-badge.hybrid {
-      background: var(--info-color);
-      color: white;
-    }
-
-    .type-badge.virtual {
-      background: var(--warning-color);
-      color: white;
-    }
-
-    .card-content {
+    .card-body {
       padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      height: calc(100% - 160px);
     }
 
     .card-title {
-      font-size: 1.125rem;
+      font-size: 1.25rem;
       font-weight: 600;
+      color: var(--text-primary);
       margin-bottom: 0.5rem;
-      color: var(--dark-color);
       line-height: 1.4;
     }
 
     .card-company {
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
-    }
-
-    .card-description {
-      color: var(--text-primary);
-      font-size: 0.9375rem;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      flex-grow: 1;
     }
 
     .card-meta {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
       margin-bottom: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
     }
 
-    .deadline {
-      color: var(--text-secondary);
-      font-size: 0.875rem;
+    .card-meta-item {
       display: flex;
       align-items: center;
       gap: 0.25rem;
     }
 
+    .card-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     .card-actions {
       display: flex;
       gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .btn-outline-custom {
-      border: 1px solid var(--border-color);
+      border: 2px solid var(--border-color);
       color: var(--text-primary);
       background: transparent;
       padding: 0.5rem 1rem;
@@ -467,7 +364,6 @@ $list = $stmt->get_result();
       color: var(--secondary-color);
     }
 
-    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 3rem 2rem;
@@ -493,7 +389,50 @@ $list = $stmt->get_result();
       color: var(--text-secondary);
     }
 
-    /* Responsive Design */
+    .alert {
+      border: none;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      background-color: rgba(113, 221, 55, 0.1);
+      color: #047857;
+      border-left-color: #10b981;
+    }
+
+    .alert-danger {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      border-left-color: #ef4444;
+    }
+
+    .alert-warning {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+      border-left-color: #f59e0b;
+    }
+
+    .alert-info {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border-left-color: #3b82f6;
+    }
+
+    /* Auto-dismiss animation */
+    .alert.auto-dismiss {
+      animation: fadeInOut 5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-10px); }
+      10%, 90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
     @media (max-width: 768px) {
       .main-content {
         margin-left: 0;
@@ -522,31 +461,6 @@ $list = $stmt->get_result();
         flex-direction: column;
       }
     }
-
-    /* Loading Animation */
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      margin: -10px 0 0 -10px;
-      border: 2px solid transparent;
-      border-top: 2px solid var(--primary-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
 </head>
 
@@ -555,6 +469,24 @@ $list = $stmt->get_result();
 <?php include 'includes/navbar.php'; ?>
 
 <div class="main-content">
+  <!-- Success/Error Messages -->
+  <?php if ($success_message): ?>
+    <div class="alert alert-success alert-dismissible fade show auto-dismiss" role="alert">
+      <i class="bi bi-check-circle me-2"></i>
+      <?= $success_message ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($error_message): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <?= $error_message ?>
+      <a href="student-applications.php" class="alert-link ms-2">View Applications</a>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <?php endif; ?>
+
   <!-- Page Header -->
   <div class="page-header">
     <div class="page-header-content">
@@ -621,162 +553,116 @@ $list = $stmt->get_result();
       <div class="results-count">
         <strong><?= $list->num_rows ?></strong> internship<?= $list->num_rows !== 1 ? 's' : '' ?> found
       </div>
-      <div class="view-toggles">
-        <button class="view-toggle active" data-view="grid">
-          <i class="bi bi-grid-3x3-gap"></i>
-        </button>
-        <button class="view-toggle" data-view="list">
-          <i class="bi bi-list"></i>
-        </button>
+      <div class="results-actions">
+        <a href="student-applications.php" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-list-check"></i> My Applications
+        </a>
       </div>
     </div>
 
-    <?php if ($list->num_rows === 0): ?>
-      <div class="empty-state">
-        <div class="empty-state-icon">
-          <i class="bi bi-search"></i>
-        </div>
-        <h3 class="empty-state-title">No internships found</h3>
-        <p class="empty-state-text">Try adjusting your search filters or explore all available opportunities</p>
-      </div>
-    <?php else: ?>
-      <div class="row g-4" id="internshipGrid">
-        <?php while ($row = $list->fetch_assoc()): 
-          $internship_id = (int)$row['internship_id'];
-          $is_saved = isset($saved[$internship_id]);
-        ?>
-          <div class="col-md-6 col-lg-4">
-            <div class="internship-card">
-              <div class="card-image">
-                <?php if (!empty($row['poster'])): ?>
-                  <img src="uploads/<?= rawurlencode($row['poster']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
-                <?php else: ?>
-                  <img src="https://placehold.co/600x400/696cff/ffffff?text=<?= urlencode($row['company_name']) ?>" alt="<?= htmlspecialchars($row['title']) ?>">
-                <?php endif; ?>
-                
-                <div class="save-badge <?= $is_saved ? 'saved' : '' ?>">
-                  <?= $is_saved ? '★' : '☆' ?>
-                </div>
-                
-                <div class="type-badge <?= $row['type'] ?>">
-                  <?= htmlspecialchars(ucfirst($row['type'])) ?>
-                </div>
-              </div>
-
-              <div class="card-content">
-                <h3 class="card-title"><?= htmlspecialchars($row['title']) ?></h3>
-                
-                <div class="card-company">
-                  <i class="bi bi-building"></i>
-                  <span><?= htmlspecialchars($row['company_name']) ?></span>
-                  <span>•</span>
-                  <i class="bi bi-geo-alt"></i>
-                  <span><?= htmlspecialchars($row['location']) ?></span>
-                </div>
-
-                <p class="card-description"><?= htmlspecialchars($row['description']) ?></p>
-
-                <div class="card-meta">
-                  <div class="deadline">
-                    <i class="bi bi-calendar-event"></i>
-                    <span>Due: <?= date('M j, Y', strtotime($row['deadline'])) ?></span>
-                  </div>
-                </div>
-
-                <div class="card-actions">
-                  <a href="view-internship.php?internship_id=<?= $internship_id ?>" 
-                     class="btn-outline-custom">
-                    <i class="bi bi-eye"></i> View Details
-                  </a>
-                  
-                  <form method="post" action="toggle-save.php" style="flex: 1;">
-                    <input type="hidden" name="internship_id" value="<?= $internship_id ?>">
-                    <input type="hidden" name="back" value="student-dashboard.php">
-                    <button class="btn-outline-custom btn-save <?= $is_saved ? 'saved' : '' ?>" type="submit">
-                      <i class="bi bi-<?= $is_saved ? 'bookmark-fill' : 'bookmark' ?>"></i>
-                      <?= $is_saved ? 'Saved' : 'Save' ?>
-                    </button>
-                  </form>
-                </div>
-              </div>
+    <?php if ($list->num_rows > 0): ?>
+      <?php while ($row = $list->fetch_assoc()): 
+        $internship_id = (int)$row['internship_id'];
+        $is_saved = isset($saved[$internship_id]);
+      ?>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title"><?= htmlspecialchars($row['title']) ?></h5>
+            
+            <div class="card-company">
+              <i class="bi bi-building"></i>
+              <?= htmlspecialchars($row['company_name']) ?>
+            </div>
+            
+            <div class="card-meta">
+              <span class="card-meta-item">
+                <i class="bi bi-geo-alt"></i>
+                <?= htmlspecialchars($row['location']) ?>
+              </span>
+              <span class="card-meta-item">
+                <i class="bi bi-clock"></i>
+                <?= htmlspecialchars($row['duration']) ?>
+              </span>
+              <span class="card-meta-item">
+                <i class="bi bi-calendar"></i>
+                Deadline: <?= date('M j, Y', strtotime($row['deadline'])) ?>
+              </span>
+              <span class="card-meta-item">
+                <i class="bi bi-tag"></i>
+                <?= htmlspecialchars(ucfirst($row['type'])) ?>
+              </span>
+            </div>
+            
+            <p class="card-description">
+              <?= htmlspecialchars($row['description']) ?>
+            </p>
+            
+            <div class="card-actions">
+              <a href="view-internship.php?internship_id=<?= $internship_id ?>" 
+                 class="btn btn-outline-custom">
+                <i class="bi bi-eye"></i> View Details
+              </a>
+              
+              <a href="apply-internship.php?internship_id=<?= $internship_id ?>" 
+                 class="btn btn-outline-custom">
+                <i class="bi bi-send"></i> Apply Now
+              </a>
+              
+              <form method="post" action="toggle-save.php" class="d-inline">
+                <input type="hidden" name="internship_id" value="<?= $internship_id ?>">
+                <input type="hidden" name="back" value="student-dashboard.php">
+                <button class="btn btn-save <?= $is_saved ? 'saved' : '' ?>" type="submit">
+                  <i class="bi bi-<?= $is_saved ? 'bookmark-fill' : 'bookmark' ?>"></i>
+                  <?= $is_saved ? 'Saved' : 'Save' ?>
+                </button>
+              </form>
             </div>
           </div>
-        <?php endwhile; ?>
+        </div>
+      <?php endwhile; ?>
+      
+    <?php else: ?>
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h3 class="empty-state-title">No internships found</h3>
+        <p class="empty-state-text">
+          <?php if ($q || $loc || $type): ?>
+            Try adjusting your search criteria to find more opportunities.
+          <?php else: ?>
+            There are no active internship positions at the moment. Check back later for new opportunities!
+          <?php endif; ?>
+        </p>
+        <?php if ($q || $loc || $type): ?>
+          <a href="student-dashboard.php" class="btn btn-outline-primary mt-3">
+            <i class="bi bi-arrow-clockwise"></i> Clear Filters
+          </a>
+        <?php endif; ?>
       </div>
     <?php endif; ?>
   </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // View toggle functionality
-  const viewToggles = document.querySelectorAll('.view-toggle');
-  const grid = document.getElementById('internshipGrid');
-  
-  viewToggles.forEach(toggle => {
-    toggle.addEventListener('click', function() {
-      viewToggles.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      
-      const view = this.dataset.view;
-      if (view === 'list') {
-        grid.className = 'row g-3';
-        grid.querySelectorAll('.col-md-6').forEach(col => {
-          col.className = 'col-12';
-        });
-      } else {
-        grid.className = 'row g-4';
-        grid.querySelectorAll('.col-12').forEach(col => {
-          col.className = 'col-md-6 col-lg-4';
-        });
-      }
-    });
+// Auto-dismiss success messages after 5 seconds
+setTimeout(() => {
+  const autoDismissAlerts = document.querySelectorAll('.alert.auto-dismiss');
+  autoDismissAlerts.forEach(alert => {
+    const bsAlert = new bootstrap.Alert(alert);
+    bsAlert.close();
   });
+}, 5000);
 
-  // Enhanced form submission
-  const searchForm = document.getElementById('searchForm');
-  const searchBtn = searchForm.querySelector('.btn-search');
-  
-  searchForm.addEventListener('submit', function() {
-    searchBtn.classList.add('loading');
-    searchBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Searching...';
-  });
-
-  // Save button animations
-  const saveForms = document.querySelectorAll('form[action="toggle-save.php"]');
-  saveForms.forEach(form => {
-    form.addEventListener('submit', function(e) {
-      const button = this.querySelector('.btn-save');
-      button.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        button.style.transform = 'scale(1)';
-      }, 150);
-    });
-  });
-
-  // Card hover effects
-  const cards = document.querySelectorAll('.internship-card');
-  cards.forEach(card => {
-    card.addEventListener('mouseenter', function() {
-      this.style.borderColor = 'var(--primary-color)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-      this.style.borderColor = 'var(--border-color)';
-    });
-  });
-
-  // Auto-focus search input if empty results
-  <?php if ($list->num_rows === 0 && empty($q)): ?>
-  document.querySelector('input[name="q"]').focus();
-  <?php endif; ?>
-});
+// Clean URL after displaying messages
+if (window.location.search.includes('success=') || window.location.search.includes('error=')) {
+  setTimeout(() => {
+    const url = new URL(window.location);
+    url.searchParams.delete('success');
+    url.searchParams.delete('error');
+    url.searchParams.delete('internship');
+    window.history.replaceState({}, '', url);
+  }, 100);
+}
 </script>
-
 </body>
 </html>
