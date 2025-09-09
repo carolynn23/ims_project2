@@ -4,7 +4,7 @@ $displayName = $_SESSION['display_name'] ?? 'User';
 $userRole = $_SESSION['role'] ?? 'user';
 ?>
 
-<!-- Modern Sneat Style Navbar -->
+<!-- Modern Clean Navbar -->
 <nav class="modern-navbar">
   <div class="navbar-container">
     <!-- Left Section -->
@@ -28,29 +28,11 @@ $userRole = $_SESSION['role'] ?? 'user';
 
     <!-- Right Section -->
     <div class="navbar-right">
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <!-- Messages -->
-        <div class="action-item">
-          <button class="action-btn">
-            <i class="bi bi-chat-dots"></i>
-            <span class="notification-badge bg-success">2</span>
-          </button>
-        </div>
-
-        <!-- Settings -->
-        <div class="action-item">
-          <button class="action-btn">
-            <i class="bi bi-gear"></i>
-          </button>
-        </div>
-      </div>
-
       <!-- User Profile -->
       <div class="user-profile dropdown">
         <button class="profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="profile-avatar">
-            <img src="https://i.pravatar.cc/40?seed=<?= urlencode($displayName) ?>" alt="<?= htmlspecialchars($displayName) ?>">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEwIDMyQzEwIDI2LjQ3NzIgMTQuNDc3MiAyMiAyMCAyMkMyNS41MjI4IDIyIDMwIDI2LjQ3NzIgMzAgMzJIMTBaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="<?= htmlspecialchars($displayName) ?>">
             <div class="status-indicator"></div>
           </div>
           <div class="profile-info">
@@ -63,7 +45,7 @@ $userRole = $_SESSION['role'] ?? 'user';
         <div class="dropdown-menu profile-dropdown">
           <div class="profile-header">
             <div class="profile-avatar-large">
-              <img src="https://i.pravatar.cc/60?seed=<?= urlencode($displayName) ?>" alt="<?= htmlspecialchars($displayName) ?>">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiM2OTZjZmYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iOSIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE1IDQ4QzE1IDM5LjcxNTcgMjEuNzE1NyAzMyAzMCAzM0MzOC4yODQzIDMzIDQ1IDM5LjcxNTcgNDUgNDhIMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="<?= htmlspecialchars($displayName) ?>">
               <div class="status-indicator-large"></div>
             </div>
             <div class="profile-details">
@@ -201,62 +183,6 @@ $userRole = $_SESSION['role'] ?? 'user';
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-/* Quick Actions */
-.quick-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.action-item {
-  position: relative;
-}
-
-.action-btn {
-  width: 40px;
-  height: 40px;
-  background: var(--hover-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-primary);
-  font-size: 1.125rem;
-  transition: var(--transition);
-  position: relative;
-}
-
-.action-btn:hover {
-  background: white;
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.notification-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: var(--danger-color);
-  color: white;
-  border-radius: 10px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  min-width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-}
-
-.notification-badge.bg-success {
-  background: var(--success-color);
 }
 
 /* User Profile */
@@ -480,16 +406,6 @@ $userRole = $_SESSION['role'] ?? 'user';
 @media (max-width: 768px) {
   .navbar-container {
     padding: 0 1rem;
-  }
-  
-  .quick-actions {
-    gap: 0.25rem;
-  }
-  
-  .action-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
   }
   
   .dropdown-menu {

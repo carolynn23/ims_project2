@@ -297,7 +297,7 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                         <a class="nav-link" href="student-applications.php">
                             <i class="nav-icon bi bi-file-earmark-text"></i>
                             <span class="nav-text">My Applications</span>
-                            <span class="nav-badge">3</span>
+                          
                         </a>
                     </li>
                     <li class="nav-item">
@@ -316,7 +316,7 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                         <a class="nav-link" href="student-notifications.php">
                             <i class="nav-icon bi bi-bell"></i>
                             <span class="nav-text">Notifications</span>
-                            <span class="nav-badge">5</span>
+                          
                         </a>
                     </li>
                     <li class="nav-item">
