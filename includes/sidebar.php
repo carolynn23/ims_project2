@@ -1,13 +1,49 @@
 <?php
-require_once 'config.php';
+// Fixed path handling for config.php
+// This works whether sidebar is included from root, admin, or any subfolder
+
+// Check if config.php exists in different possible locations
+$config_paths = [
+    '../config.php',     // From admin folder
+    'config.php',        // From root folder
+    '../../config.php'   // From deeper subfolders
+];
+
+$config_loaded = false;
+foreach ($config_paths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $config_loaded = true;
+        break;
+    }
+}
+
+if (!$config_loaded) {
+    die('Error: config.php not found. Please check file paths.');
+}
 
 // Check if the user is logged in and their role
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
+    // Determine correct login path based on current location
+    $login_paths = [
+        '../secure_login.php',  // From admin folder
+        'secure_login.php',     // From root folder
+        '../login.php',         // Alternative login file
+        'login.php'             // Alternative from root
+    ];
+    
+    foreach ($login_paths as $login_path) {
+        if (file_exists($login_path)) {
+            header("Location: $login_path");
+            exit();
+        }
+    }
+    
+    // Fallback if no login file found
+    die('Please login to access this page.');
 }
 
-$role = $_SESSION['role']; // 'student', 'employer', 'alumni'
+$role = $_SESSION['role']; // 'student', 'employer', 'alumni', 'admin'
 ?>
 <head>
   <meta charset="UTF-8">
@@ -297,7 +333,7 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                         <a class="nav-link" href="student-applications.php">
                             <i class="nav-icon bi bi-file-earmark-text"></i>
                             <span class="nav-text">My Applications</span>
-                          
+                            <span class="nav-badge">3</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -316,7 +352,7 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                         <a class="nav-link" href="student-notifications.php">
                             <i class="nav-icon bi bi-bell"></i>
                             <span class="nav-text">Notifications</span>
-                          
+                            <span class="nav-badge">5</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -405,69 +441,114 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni'
                             <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <!-- Admin Role Menu -->
+        <?php if ($role === 'admin'): ?>
+            <!-- Admin Dashboard Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Dashboard</div>
+                <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="mentor-students.php">
-                            <i class="nav-icon bi bi-person-check"></i>
-                            <span class="nav-text">Mentor Students</span>
+                        <a class="nav-link active" href="admin-dashboard.php">
+                            <i class="nav-icon bi bi-speedometer2"></i>
+                            <span class="nav-text">Main Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_security_dashboard.php">
+                            <i class="nav-icon bi bi-shield-check"></i>
+                            <span class="nav-text">Security Dashboard</span>
                         </a>
                     </li>
                 </ul>
             </div>
 
+            <!-- User Management Section -->
             <div class="nav-section">
-                <div class="nav-section-title">Account</div>
+                <div class="nav-section-title">User Management</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="edit-alumni-profile.php">
+                        <a class="nav-link" href="admin-users.php">
+                            <i class="nav-icon bi bi-people"></i>
+                            <span class="nav-text">All Users</span>
+                            <span class="nav-badge" id="pending-users">5</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manage-users.php">
+                            <i class="nav-icon bi bi-person-lines-fill"></i>
+                            <span class="nav-text">Manage Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-roles.php">
+                            <i class="nav-icon bi bi-person-badge"></i>
+                            <span class="nav-text">User Roles</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content Management Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Content Management</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="view-all-internships.php">
+                            <i class="nav-icon bi bi-briefcase"></i>
+                            <span class="nav-text">Internships</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-applications.php">
+                            <i class="nav-icon bi bi-file-earmark-text"></i>
+                            <span class="nav-text">Applications</span>
+                            <span class="nav-badge" id="pending-applications">12</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-companies.php">
+                            <i class="nav-icon bi bi-building"></i>
+                            <span class="nav-text">Companies</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- System Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-settings.php">
                             <i class="nav-icon bi bi-gear"></i>
-                            <span class="nav-text">Profile Settings</span>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reports.php">
+                            <i class="nav-icon bi bi-graph-up"></i>
+                            <span class="nav-text">Reports</span>
                         </a>
                     </li>
                 </ul>
             </div>
         <?php endif; ?>
 
-        <!-- Logout Section -->
+        <!-- Logout Section (for all roles) -->
         <div class="nav-logout">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link logout" href="logout.php">
+                    <a class="nav-link logout" href="<?= file_exists('../logout.php') ? '../logout.php' : 'logout.php' ?>">
                         <i class="nav-icon bi bi-box-arrow-right"></i>
                         <span class="nav-text">Logout</span>
                     </a>
                 </li>
             </ul>
         </div>
+
     </nav>
 </aside>
-
-<!-- JavaScript for Enhanced Functionality -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set active link based on current page
-    const currentPage = window.location.pathname.split('/').pop();
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
-        }
-    });
-
-    // Add hover effects and smooth transitions
-    navLinks.forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateX(4px)';
-            }
-        });
-
-        link.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateX(0)';
-            }
-        });
-    });
-});
-</script>
