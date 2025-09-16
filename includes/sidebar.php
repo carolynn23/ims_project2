@@ -458,9 +458,9 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni', 'admin'
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_security_dashboard.php">
+                        <a class="nav-link" href="admin-post-internships.php">
                             <i class="nav-icon bi bi-shield-check"></i>
-                            <span class="nav-text">Security Dashboard</span>
+                            <span class="nav-text">Post Internships</span>
                         </a>
                     </li>
                 </ul>
@@ -475,18 +475,6 @@ $role = $_SESSION['role']; // 'student', 'employer', 'alumni', 'admin'
                             <i class="nav-icon bi bi-people"></i>
                             <span class="nav-text">All Users</span>
                             <span class="nav-badge" id="pending-users">5</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="manage-users.php">
-                            <i class="nav-icon bi bi-person-lines-fill"></i>
-                            <span class="nav-text">Manage Users</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-roles.php">
-                            <i class="nav-icon bi bi-person-badge"></i>
-                            <span class="nav-text">User Roles</span>
                         </a>
                     </li>
                 </ul>

@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $tables_
 $status_filter = isset($_GET['status']) && in_array($_GET['status'], ['all', 'active', 'inactive', 'pending']) ? $_GET['status'] : 'all';
 $search = trim($_GET['search'] ?? '');
 $page = max(1, (int)($_GET['page'] ?? 1));
-$limit = 12;
+$limit = 20;
 $offset = ($page - 1) * $limit;
 
 // Initialize data
@@ -359,182 +359,269 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Companies Management - InternHub Admin</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-color: #696cff;
+            --primary-light: #7367f0;
+            --secondary-color: #8592a3;
             --success-color: #71dd37;
             --warning-color: #ffb400;
             --danger-color: #ff3e1d;
             --info-color: #03c3ec;
+            --light-color: #fcfdfd;
+            --dark-color: #233446;
             --text-primary: #566a7f;
             --text-secondary: #a8aaae;
+            --text-muted: #c7c8cc;
             --border-color: #e4e6e8;
             --card-bg: #fff;
             --hover-bg: #f8f9fa;
             --shadow-sm: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+            --shadow-md: 0 4px 8px -4px rgba(67, 89, 113, 0.1);
             --shadow-lg: 0 6px 14px 0 rgba(67, 89, 113, 0.15);
             --border-radius: 8px;
             --border-radius-lg: 12px;
             --transition: all 0.2s ease-in-out;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f5f9;
+            background-color: #f8f9fa;
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
+        /* Main Content */
         .main-content {
             margin-left: 260px;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, var(--info-color) 0%, var(--primary-color) 100%);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            color: white;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(180deg); }
-        }
-
-        .filter-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius-lg);
+            margin-top: 70px;
             padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .companies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .company-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius-lg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
+            min-height: calc(100vh - 70px);
             transition: var(--transition);
-            overflow: hidden;
         }
 
-        .company-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-header {
+        /* Page Header */
+        .welcome-header {
+            background: linear-gradient(135deg, var(--success-color) 0%, #66c732 100%);
+            border-radius: var(--border-radius-lg);
+            color: white;
             padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--hover-bg);
-            position: relative;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
         }
 
-        .card-body {
+        .welcome-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .welcome-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        
+
+
+        /* Section Cards */
+        .section-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
             padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
 
-        .card-footer {
-            padding: 1rem 1.5rem;
-            background: var(--hover-bg);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .company-name {
-            font-size: 1.25rem;
+        .section-title {
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Filter Groups */
+        .filter-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
-            line-height: 1.3;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            background: var(--card-bg);
+        }
+
+        .filter-pill:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .filter-pill.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Search Form */
+        .search-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(105, 108, 255, 0.1);
+            outline: none;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Table Styling */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+            font-size: 0.875rem;
+        }
+
+        .table th {
+            background: var(--hover-bg);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover {
+            background: var(--hover-bg);
+        }
+
+        /* Company Info */
+        .company-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
         }
 
         .company-industry {
-            color: var(--primary-color);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            font-size: 0.9375rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
 
         .company-contact {
-            color: var(--text-secondary);
             font-size: 0.875rem;
-            margin-bottom: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+        }
+
+        .company-phone {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
 
         .company-stats {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
 
         .stat-item {
             text-align: center;
-            flex: 1;
         }
 
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .stat-item-number {
+            font-weight: 600;
             color: var(--primary-color);
-            line-height: 1;
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .company-description {
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
+        /* Status Badges */
         .status-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
+            padding: 0.25rem 0.625rem;
+            border-radius: var(--border-radius);
             font-size: 0.75rem;
             font-weight: 500;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-active {
@@ -552,12 +639,7 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
             color: var(--danger-color);
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
+        /* Action Buttons */
         .action-btn {
             padding: 0.375rem 0.75rem;
             border: none;
@@ -565,9 +647,10 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
             font-size: 0.75rem;
             font-weight: 500;
             transition: var(--transition);
+            cursor: pointer;
+            margin: 0.125rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            cursor: pointer;
         }
 
         .btn-approve {
@@ -610,97 +693,129 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
             color: white;
         }
 
-        .btn-view {
-            background: rgba(105, 108, 255, 0.1);
-            color: var(--primary-color);
-        }
-
-        .btn-view:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .filter-pills {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-pill {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .filter-pill.active,
-        .filter-pill:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .company-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .website-link {
-            color: var(--primary-color);
-            text-decoration: none;
+        /* Alerts */
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 0.875rem;
         }
 
-        .website-link:hover {
-            text-decoration: underline;
+        .alert-success {
+            background: rgba(113, 221, 55, 0.1);
+            color: var(--success-color);
+            border-left: 3px solid var(--success-color);
         }
 
-        .no-data {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
+        .alert-warning {
+            background: rgba(255, 180, 0, 0.1);
+            color: var(--warning-color);
+            border-left: 3px solid var(--warning-color);
         }
 
-        .pagination {
-            justify-content: center;
-            margin-top: 2rem;
+        .alert-danger {
+            background: rgba(255, 62, 29, 0.1);
+            color: var(--danger-color);
+            border-left: 3px solid var(--danger-color);
         }
 
-        .database-status {
+        .alert-info {
+            background: rgba(3, 195, 236, 0.1);
+            color: var(--info-color);
+            border-left: 3px solid var(--info-color);
+        }
+
+        /* Database Status Alert */
+        .status-info {
             background: var(--info-color);
             color: white;
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             border-radius: var(--border-radius-lg);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        @media (max-width: 768px) {
+        /* No Data State */
+        .no-data {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .page-link {
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .page-link:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .page-item.active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding: 1rem;
             }
-            
-            .companies-grid {
-                grid-template-columns: 1fr;
+
+            .stats-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
-            
+        }
+
+        @media (max-width: 768px) {
+            .welcome-header {
+                padding: 1.25rem;
+            }
+
+            .section-card {
+                padding: 1.25rem;
+            }
+
             .filter-pills {
                 justify-content: center;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .table-responsive {
+                font-size: 0.8125rem;
+            }
+
+            .action-btn {
+                font-size: 0.6875rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .company-stats {
+                flex-direction: column;
+                gap: 0.25rem;
             }
         }
     </style>
@@ -712,22 +827,17 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
 
     <div class="main-content">
         <!-- Page Header -->
-        <div class="page-header">
-            <div style="position: relative; z-index: 2;">
-                <h1 class="mb-2">Companies Management</h1>
-                <p class="mb-0">Manage employer companies and their accounts</p>
-            </div>
+        <div class="welcome-header">
+            <h1><i class="bi bi-building me-2"></i>Companies Management</h1>
+            <p>Manage employer companies and their accounts</p>
         </div>
 
         <!-- Database Status Check -->
         <?php if (!$tables_exist['employers']): ?>
-            <div class="database-status">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle me-3" style="font-size: 1.5rem;"></i>
-                    <div>
-                        <strong>Employers table not found!</strong>
-                        <p class="mb-0">The companies management feature requires the 'employers' table to be created in your database.</p>
-                    </div>
+            <div class="status-info">
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>
+                    <strong>Employers table not found!</strong> The companies management feature requires the 'employers' table to be created in your database.
                 </div>
             </div>
         <?php endif; ?>
@@ -735,262 +845,242 @@ $total_pages = $total_companies > 0 ? ceil($total_companies / $limit) : 1;
         <!-- Alert Messages -->
         <?php if (!empty($message)): ?>
             <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
+                <i class="bi bi-<?php echo ($message_type === 'success') ? 'check-circle' : (($message_type === 'warning') ? 'exclamation-triangle' : (($message_type === 'info') ? 'info-circle' : 'x-circle')); ?> me-2"></i>
                 <?php echo htmlspecialchars($message); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
         <?php if ($tables_exist['employers']): ?>
+       
+
         <!-- Filters -->
-        <div class="filter-card">
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <div class="row">
-                        <?php if ($users_has_status && !empty($status_counts)): ?>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label small text-muted">Filter by Status</label>
-                            <div class="filter-pills">
-                                <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => 'all'])); ?>" 
-                                   class="filter-pill <?php echo ($status_filter === 'all') ? 'active' : ''; ?>">
-                                    All (<?php echo array_sum($status_counts); ?>)
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-funnel"></i>
+                Filter Companies
+            </div>
+            
+            <div class="row">
+                <?php if ($users_has_status && !empty($status_counts)): ?>
+                <div class="col-lg-6">
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <div class="filter-pills">
+                            <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => 'all'])); ?>" 
+                               class="filter-pill <?php echo ($status_filter === 'all') ? 'active' : ''; ?>">
+                                All (<?php echo array_sum($status_counts); ?>)
+                            </a>
+                            <?php foreach ($status_counts as $status => $count): ?>
+                                <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => $status])); ?>" 
+                                   class="filter-pill <?php echo ($status_filter === $status) ? 'active' : ''; ?>">
+                                    <?php echo ucfirst($status); ?> (<?php echo $count; ?>)
                                 </a>
-                                <?php foreach ($status_counts as $status => $count): ?>
-                                    <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => $status])); ?>" 
-                                       class="filter-pill <?php echo ($status_filter === $status) ? 'active' : ''; ?>">
-                                        <?php echo ucfirst($status); ?> (<?php echo $count; ?>)
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endif; ?>
                     </div>
                 </div>
-                <div class="col-lg-4 mb-3">
-                    <form method="GET" class="d-flex">
-                        <?php if (isset($_GET['status'])): ?>
-                            <input type="hidden" name="status" value="<?php echo htmlspecialchars($_GET['status']); ?>">
-                        <?php endif; ?>
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Search companies..." value="<?php echo htmlspecialchars($search); ?>">
-                        <button type="submit" class="btn btn-outline-primary ms-2">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
+                <?php endif; ?>
+                <div class="col-lg-6">
+                    <div class="filter-group">
+                        <label class="filter-label">Search</label>
+                        <form method="GET" class="search-form">
+                            <?php if (isset($_GET['status'])): ?>
+                                <input type="hidden" name="status" value="<?php echo htmlspecialchars($_GET['status']); ?>">
+                            <?php endif; ?>
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Search companies..." value="<?php echo htmlspecialchars($search); ?>">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Companies Grid -->
-        <?php if (empty($companies)): ?>
-            <div class="no-data">
-                <i class="bi bi-building" style="font-size: 4rem; opacity: 0.3;"></i>
-                <h4 class="mt-3">No Companies Found</h4>
-                <p>
-                    <?php if (!empty($search)): ?>
-                        No companies found matching your search criteria.
-                    <?php else: ?>
-                        No companies have registered yet.
-                    <?php endif; ?>
-                </p>
-                <?php if (!empty($search)): ?>
-                    <a href="admin-companies.php" class="btn btn-outline-primary">
-                        <i class="bi bi-arrow-left me-2"></i>Show All Companies
-                    </a>
-                <?php endif; ?>
+        <!-- Companies Table -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Statistics</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($companies)): ?>
+                            <tr>
+                                <td colspan="6">
+                                    <div class="no-data">
+                                        <i class="bi bi-building"></i>
+                                        <h4>No Companies Found</h4>
+                                        <p>
+                                            <?php if (!empty($search)): ?>
+                                                No companies found matching your search criteria.
+                                            <?php else: ?>
+                                                No companies have registered yet.
+                                            <?php endif; ?>
+                                        </p>
+                                        <?php if (!empty($search)): ?>
+                                            <a href="admin-companies.php" class="btn btn-outline-primary">
+                                                <i class="bi bi-arrow-left me-2"></i>Show All Companies
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($companies as $company): ?>
+                                <tr>
+                                    <td>
+                                        <div class="company-name"><?php echo htmlspecialchars($company['company_name']); ?></div>
+                                        <?php if (!empty($company['industry'])): ?>
+                                            <div class="company-industry"><?php echo htmlspecialchars($company['industry']); ?></div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div class="company-contact"><?php echo htmlspecialchars($company['email']); ?></div>
+                                        <?php if (!empty($company['phone'])): ?>
+                                            <div class="company-phone"><?php echo htmlspecialchars($company['phone']); ?></div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($users_has_status): ?>
+                                            <span class="status-badge status-<?php echo htmlspecialchars($company['status']); ?>">
+                                                <?php echo htmlspecialchars($company['status']); ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="status-badge status-active">Active</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div class="company-stats">
+                                            <div class="stat-item">
+                                                <div class="stat-item-number"><?php echo (int)$company['internship_count']; ?></div>
+                                                <div>Internships</div>
+                                            </div>
+                                            <div class="stat-item">
+                                                <div class="stat-item-number"><?php echo (int)$company['application_count']; ?></div>
+                                                <div>Applications</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php if ($users_has_created_at && !empty($company['created_at'])): ?>
+                                            <small class="text-muted">
+                                                <?php echo date('M j, Y', strtotime($company['created_at'])); ?>
+                                            </small>
+                                        <?php else: ?>
+                                            <small class="text-muted">Unknown</small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap">
+                                            <?php if ($users_has_status && $company['status'] !== 'active'): ?>
+                                                <form method="POST" class="d-inline" onsubmit="return confirm('Approve this company?')">
+                                                    <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
+                                                    <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="submit" class="action-btn btn-approve">
+                                                        <i class="bi bi-check-lg me-1"></i>Approve
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($users_has_status && $company['status'] === 'active'): ?>
+                                                <form method="POST" class="d-inline" onsubmit="return confirm('Suspend this company?')">
+                                                    <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
+                                                    <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
+                                                    <input type="hidden" name="action" value="suspend">
+                                                    <button type="submit" class="action-btn btn-suspend">
+                                                        <i class="bi bi-pause me-1"></i>Suspend
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                            
+                                            <form method="POST" class="d-inline" onsubmit="return confirm('Reset password for this company?')">
+                                                <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
+                                                <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
+                                                <input type="hidden" name="action" value="reset_password">
+                                                <button type="submit" class="action-btn btn-reset">
+                                                    <i class="bi bi-key me-1"></i>Reset PWD
+                                                </button>
+                                            </form>
+                                            
+                                            <form method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this company? This will also delete all related internships and applications.')">
+                                                <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
+                                                <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
+                                                <input type="hidden" name="action" value="delete">
+                                                <button type="submit" class="action-btn btn-delete">
+                                                    <i class="bi bi-trash me-1"></i>Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-        <?php else: ?>
-            <div class="companies-grid">
-                <?php foreach ($companies as $company): ?>
-                    <div class="company-card">
-                        <div class="card-header">
-                            <?php if ($users_has_status): ?>
-                                <span class="status-badge status-<?php echo htmlspecialchars($company['status']); ?>">
-                                    <?php echo htmlspecialchars($company['status']); ?>
-                                </span>
-                            <?php endif; ?>
-                            
-                            <h5 class="company-name"><?php echo htmlspecialchars($company['company_name']); ?></h5>
-                            <?php if (!empty($company['industry'])): ?>
-                                <div class="company-industry"><?php echo htmlspecialchars($company['industry']); ?></div>
-                            <?php endif; ?>
-                            <div class="company-contact">
-                                <i class="bi bi-envelope me-1"></i>
-                                <?php echo htmlspecialchars($company['email']); ?>
-                            </div>
-                        </div>
-                        
-                        <div class="card-body">
-                            <!-- Company Stats -->
-                            <div class="company-stats">
-                                <div class="stat-item">
-                                    <div class="stat-number"><?php echo (int)$company['internship_count']; ?></div>
-                                    <div class="stat-label">Internships</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number"><?php echo (int)$company['application_count']; ?></div>
-                                    <div class="stat-label">Applications</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number">
-                                        <?php 
-                                        if ($users_has_created_at && !empty($company['created_at'])) {
-                                            echo ceil((time() - strtotime($company['created_at'])) / (60 * 60 * 24));
-                                        } else {
-                                            echo 'N/A';
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="stat-label">Days Active</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Company Meta -->
-                            <div class="company-meta">
-                                <?php if (!empty($company['contact_person'])): ?>
-                                    <div class="meta-item">
-                                        <i class="bi bi-person"></i>
-                                        <span><?php echo htmlspecialchars($company['contact_person']); ?></span>
-                                    </div>
-                                <?php endif; ?>
-                                <?php if (!empty($company['phone'])): ?>
-                                    <div class="meta-item">
-                                        <i class="bi bi-telephone"></i>
-                                        <span><?php echo htmlspecialchars($company['phone']); ?></span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <!-- Company Description -->
-                            <?php if (!empty($company['company_profile'])): ?>
-                                <div class="company-description">
-                                    <?php echo htmlspecialchars($company['company_profile']); ?>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <!-- Website -->
-                            <?php if (!empty($company['website'])): ?>
-                                <div class="mb-2">
-                                    <i class="bi bi-globe me-1"></i>
-                                    <a href="<?php echo htmlspecialchars($company['website']); ?>" target="_blank" class="website-link" rel="noopener noreferrer">
-                                        <?php echo htmlspecialchars($company['website']); ?>
-                                    </a>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <!-- Address -->
-                            <?php if (!empty($company['address'])): ?>
-                                <div class="meta-item">
-                                    <i class="bi bi-geo-alt"></i>
-                                    <span><?php echo htmlspecialchars($company['address']); ?></span>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <div class="card-footer">
-                            <div class="action-buttons">
-                                <?php if ($users_has_status && $company['status'] !== 'active'): ?>
-                                    <form method="POST" class="d-inline" onsubmit="return confirm('Approve this company?')">
-                                        <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
-                                        <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
-                                        <input type="hidden" name="action" value="approve">
-                                        <button type="submit" class="action-btn btn-approve">
-                                            <i class="bi bi-check-lg me-1"></i>Approve
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
-                                
-                                <?php if ($users_has_status && $company['status'] === 'active'): ?>
-                                    <form method="POST" class="d-inline" onsubmit="return confirm('Suspend this company?')">
-                                        <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
-                                        <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
-                                        <input type="hidden" name="action" value="suspend">
-                                        <button type="submit" class="action-btn btn-suspend">
-                                            <i class="bi bi-pause me-1"></i>Suspend
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
-                                
-                                <form method="POST" class="d-inline" onsubmit="return confirm('Reset password for this company?')">
-                                    <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
-                                    <input type="hidden" name="action" value="reset_password">
-                                    <button type="submit" class="action-btn btn-reset">
-                                        <i class="bi bi-key me-1"></i>Reset PWD
-                                    </button>
-                                </form>
-                                
-                                <button class="action-btn btn-view" onclick="viewCompany(<?php echo (int)$company['employer_id']; ?>)">
-                                    <i class="bi bi-eye me-1"></i>View
-                                </button>
-                                
-                                <form method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this company? This will also delete all related internships and applications.')">
-                                    <input type="hidden" name="employer_id" value="<?php echo (int)$company['employer_id']; ?>">
-                                    <input type="hidden" name="user_id" value="<?php echo (int)$company['user_id']; ?>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <button type="submit" class="action-btn btn-delete">
-                                        <i class="bi bi-trash me-1"></i>Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+        </div>
 
-            <!-- Pagination -->
-            <?php if ($total_pages > 1): ?>
-                <nav aria-label="Companies pagination">
-                    <ul class="pagination">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                        
-                        <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
-                            <li class="page-item <?php echo ($i === $page) ? 'active' : ''; ?>">
-                                <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>">
-                                    <?php echo $i; ?>
-                                </a>
-                            </li>
-                        <?php endfor; ?>
-                        
-                        <?php if ($page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            <?php endif; ?>
+        <!-- Pagination -->
+        <?php if ($total_pages > 1): ?>
+            <nav aria-label="Companies pagination">
+                <ul class="pagination">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
+                        <li class="page-item <?php echo ($i === $page) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>">
+                                <?php echo $i; ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         <?php endif; ?>
         <?php endif; ?>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        function viewCompany(employerId) {
-            // This would open a modal or redirect to detailed view
-            alert('View company details functionality would open detailed view for company ID: ' + employerId);
-        }
-        
         // Auto-hide alerts after 5 seconds
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(function(alert) {
                 setTimeout(function() {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
+                    if (alert.style.display !== 'none') {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
                 }, 5000);
             });
         });
+
+        console.log('Companies management page initialized');
     </script>
 </body>
 </html>
